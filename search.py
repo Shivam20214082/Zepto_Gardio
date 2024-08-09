@@ -178,4 +178,5 @@ interface = gr.Interface(
 )
 
 # Launch the Gradio interface
-interface.launch(share=True)
+interface.launch(server_port=7860, share=True)
+
