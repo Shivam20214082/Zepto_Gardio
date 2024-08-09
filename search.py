@@ -6,6 +6,7 @@ from langdetect import detect
 from deep_translator import GoogleTranslator
 import gradio as gr
 from functools import lru_cache
+import json
 import requests
 
 # Load the dataset
@@ -87,6 +88,13 @@ def calculate_discount_percentage(row):
         return 100 * (1 - row['discounted_price'] / row['retail_price'])
     return float('nan')  # Return NaN if the retail_price is 0 or missing
 
+def get_image_urls(image_str):
+    try:
+        image_urls = json.loads(image_str)  # Safer alternative to eval
+    except (json.JSONDecodeError, TypeError):
+        image_urls = []  # Handle errors and fallback
+    return image_urls
+
 def get_relevant_products(query, max_price, min_discount, min_rating, top_n=12):
     if not query.strip():  # Handle empty queries
         return []  # Return an empty list if query is empty
@@ -125,10 +133,7 @@ def get_relevant_products(query, max_price, min_discount, min_rating, top_n=12):
     products = []
     for _, row in filtered_results.iterrows():
         # Ensure that 'image' column contains publicly accessible URLs
-        try:
-            image_urls = eval(row['image'])  # Convert the string to a list of URLs
-        except:
-            image_urls = []  # Handle cases where eval fails
+        image_urls = get_image_urls(row['image'])
         if image_urls:  # If the list is not empty
             products.append({
                 "image": image_urls[0],  # Use the first image URL
@@ -178,5 +183,4 @@ interface = gr.Interface(
 )
 
 # Launch the Gradio interface
-interface.launch(server_port=80, share=True)
-
+interface.launch(server_name="0.0.0.0", server_port=7860, share=True)
