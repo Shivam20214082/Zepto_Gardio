@@ -9,7 +9,7 @@ from functools import lru_cache
 import requests
 
 # Load the dataset
-df = pd.read_csv("C:\\Users\\shiva\\Desktop\\ZEPTO\\Database\\cleaned_data.csv")
+df = pd.read_csv("cleaned_data.csv")
 
 # Drop duplicates
 df.drop_duplicates(inplace=True)
